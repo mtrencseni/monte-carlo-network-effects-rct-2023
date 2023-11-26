@@ -26,7 +26,7 @@
 \author{Marton Trencseni (\texttt{mtrencseni@gmail.com})}
 
 \begin{abstract}
-I run Monte Carlo simulations of content production over random Watts-Strogatz graphs to show various effects relevant to modeling and understanding Randomized Controlled Trials on social networks: the network effect, spillover effect, experiment dampening effect, intrinsic dampening effect, clustering effect, degree distribution effect and the experiment size effect. I will also define some simple metrics to measure the strength of these effects. When running experiments these potentially unexpected effects must be understood and controlled for, by a combination of Interrupted Time Series analysis, treatment group selection, and modeling the underlying graph structure to establish a baseline.
+I run Monte Carlo simulations of content production over random Watts-Strogatz graphs to show various effects relevant to modeling and understanding Randomized Controlled Trials on social networks: the network effect, spillover effect, experiment dampening effect, intrinsic dampening effect, clustering effect, degree distribution effect and the experiment size effect. I will also define some simple metrics to measure their strength. When running experiments these potentially unexpected effects must be understood and controlled for in some manner, such as modeling the underlying graph structure to establish a baseline.
  
 \end{abstract}
 
@@ -34,7 +34,7 @@ I run Monte Carlo simulations of content production over random Watts-Strogatz g
 
 \section{Introduction}
 
-In academic as well as industry domains \textbf{Randomized Controlled Trials (RCTs)} are the gold standard tool for causal inference. Examples are clinical trials of new drugs and treatments, or improving online services and other online products. One of the core assumptions of traditional RCTs is the \textbf{Independence Assumption (IA)}, that the units of experimentation are independent of each other. In plain words, the assumption is that units don't communicate with each other, they do not affect other units' outcomes based on their own experiences --- whether they are in treatment or control. For many experiments ran on online services however --- social networks such as Facebook or Twitter/X --- the IA does not hold. The simplest toy example considered in this paper is a scenario of a treatment applied to treatment users that is intended to increase their content production. Increased content production of treatment users may boost content production of control users, since they will see their treatment friend's additional posts in their feed, and thus be motivated or inclined to themselves post more. In this paper I consider this toy model, and examine various, potentially unexpected effects that affect (contaminate) an experiment run under such conditions on a network, where the IA does not hold. To aid the discussion, I will also define some simple metrics to measure the strength of these effects.
+In academic as well as industry domains \textbf{Randomized Controlled Trials (RCTs)} are the gold standard tool for causal inference. Examples are clinical trials of new drugs and treatments, or improving online services and other online products. One of the core assumptions of traditional RCTs is the \textbf{Independence Assumption (IA)}, that the units of experimentation are independent of each other. In plain words, the assumption is that units don't communicate with each other, they do not affect other units' outcomes based on their own experiences --- whether they are in treatment or control. For many experiments ran on online services however --- social networks such as Facebook or Twitter/X --- the IA does not hold. The simplest toy example considered in this paper is a scenario of a treatment applied to a group of users that is intended to increase their content production. Increased content production of treatment users may boost content production of control users, since they will see their treatment friend's additional posts in their feed, and thus be motivated or inclined to themselves post more. In this paper I consider this toy model, and examine various, potentially unexpected effects that affect (contaminate) an experiment run under such circumstances on a network, where the IA does not hold. To aid the discussion, I will also define some simple metrics to measure the strength of these effects.
 
 \section{Effects considered in this paper}
 
@@ -42,13 +42,13 @@ To discuss and understand these network effects, the paper uses Monte Carlo simu
 
 \begin{itemize}
 \setlength\itemsep{0em}
-    \item \textbf{Network effect}: each node's neighbours' content production boosts the node's own content production
-    \item \textbf{Degree distribution effect}: the network effect boost is a function of the graph's degree distribution
-    \item \textbf{Spillover effect}: an experiment that boosts intrinsic content production in a subset of the nodes (the \textit{treatment group}), this boost will spill over to the rest of the nodes
-    \item \textbf{Experiment dampening effect}: due to the spillover effect, we underestimate the lift in the treatment group as compared to control
-    \item \textbf{Intrinsic dampening effect}: the full lift of the treatment group is not realized in the network due to content production in the rest of the network being lower
-    \item \textbf{Clustering effect}: a more tightly clustered treatment group leads to higher lift compared to control
-    \item \textbf{Experiment size effect}: as we add more nodes to the treatment group, treatment content production increases due to the network effects, but not compared to the control group
+    \item \textbf{Network effect}: each node's neighbours' content production boosts the node's own content production.
+    \item \textbf{Degree distribution effect}: the network effect boost is a function of the graph's degree distribution.
+    \item \textbf{Spillover effect}: in an experiment that boosts intrinsic content production in a subset of the nodes (the \textit{treatment group}), this boost will spill over to the rest of the nodes.
+    \item \textbf{Experiment dampening effect}: due to the spillover effect, we underestimate the lift in the treatment group as compared to control.
+    \item \textbf{Intrinsic dampening effect}: the full lift of the treatment group is not realized in the network due to content production in the rest of the network being lower.
+    \item \textbf{Clustering effect}: a more tightly clustered treatment group leads to higher lift compared to control.
+    \item \textbf{Experiment size effect}: as we add more nodes to the treatment group, absolute content production increases in the treatment group (and the entire network) due to the network effects, but not relative to the control group.
 \end{itemize}
 
 \begin{figure}[h]
@@ -59,32 +59,32 @@ To discuss and understand these network effects, the paper uses Monte Carlo simu
 
 \section{Models of content production}
 
-The network is modeled as graph $G = (V, E)$, where $V$ are nodes and $E$ are edges. For simplicity we assume edges are bi-directional, in other words the modeled relationship between nodes (such as \textit{friendship, following}) is symmetric. Each node $i$ has an associated random variable $R_i$, which describes the node's propensity for content production. Furthermore, we assume the content production random variables $R_i$ follow the same distribution $R$ and are parameterized by a variable $\lambda_i$, such that $R_i = R(\lambda_i)$. Without loss of generality, we will also assume that the random variables have an expectation value, and that $E[R_i] = E[R(\lambda_i)] = \mu_i$. Note that in some of the Monte Carlo simulations, in cases when we are investigating the mean behaviour, \textit{we will replace the random variable with its mean} --- after verifying this is justified.
+The network is modeled as graph $G = (V, E)$, where $V$ are nodes and $E$ are edges. For simplicity we assume edges are bi-directional, in other words the modeled relationship between nodes (such as \textit{friendship}) is symmetric. Each node $i$ has an associated random variable $R_i$, which describes the node's propensity for content production. Furthermore, we assume the content production random variables $R_i$ follow the same distribution $R$ and are parameterized by a variable $\lambda_i$, such that $R_i = R(\lambda_i)$. Without loss of generality, we will also assume that the random variables have an expectation value, and that $E[R_i] = E[R(\lambda_i)] = \mu_i$. Specifically, we will parameterize the distributions such that $E[R_i] = E[R(\lambda_i)] = \lambda_i$. Note that in some of the Monte Carlo simulations, in cases when we are investigating the mean behaviour, \textit{we will replace the random variable with its mean} --- after verifying this is justified!
 
-We construct a dynamic model of $T$ discrete time steps: let $c_i^t$ be the amount of content produced by node $i$ at time step $t$. At $t=0$ all nodes have 0 content: $c_i^{t=0}=0$. In subsequent time steps, we use the random variables $R(\lambda_i)$ for each node $i$ to model content production, in other words $c_i^t \leftarrow R(\lambda_i^t)$, where $\leftarrow$ denotes drawing a value from the random variable. Note that we will omit indexes and superscripts at times to aid readability. We model the $\lambda_i$ as having two components $\lambda_i = \lambda_{int} + \nu_i$. The first parameter $\lambda_{int}$ models the node's \textit{intrinsic} propensity to produce content, independent of the rest of the graph, and is the same for all nodes. Note that when we model experiments, it is $\lambda_{int}$ that will get boosted by $\Delta \lambda$ for treatment nodes. The second parameter $\nu_i$ models the propensity of the node to produce more content if its neighbours produce more content. We model $\nu_i$ as some function $f$ of the node's neighbours content production in the previous time step: $\nu_i^t = f(c_j^{t-1})$, where $j$ runs for all of $i$'s neighbours. Specifically, we will use $\nu_i^t = \nu_{damp} \sum_{j \in V_i}{c_j^{t-1}}$, where $V_i$ is the set of nodes that are $i$'s neighbours. $\nu_{damp}$ is an important global dampening parameter, whose presence is important to make the overall model stable in the steady-state.
+We construct a dynamic model of $T$ discrete time steps: let $c_i^t$ be the amount of content produced by node $i$ at time step $t$. At $t=0$ all nodes have 0 content: $c_i^{t=0}=0$. In subsequent time steps, we use the random variables $R(\lambda_i)$ for each node $i$ to model content production, in other words $c_i^t \leftarrow R(\lambda_i^t)$, where $\leftarrow$ denotes drawing a value from the random variable. Note that we will omit indexes and superscripts at times to aid readability. We model the $\lambda_i$ as having two components $\lambda_i = \lambda_{int} + \nu_i$. The first parameter $\lambda_{int}$ models the node's \textit{intrinsic} propensity to produce content, independent of the rest of the graph, and is the same for all nodes on a network. When we model experiments, it is the overall $\lambda$ that will get boosted by $\Delta \lambda$ for treatment nodes, like $\lambda_i = (\lambda_{int} + \nu_i)(1 + \Delta \lambda)$ --- this overall boost simplifies reasoning about the toy models. The second parameter $\nu_i$ models the propensity of the node to produce more content if its neighbours produce more content. We model $\nu_i$ as some function $f$ of the node's neighbours content production in the previous time step: $\nu_i^t = f(c_j^{t-1})$, where $j$ runs for all of $i$'s neighbours. Specifically, we will use $\nu_i^t = \nu_{damp} \sum_{j \in V_i}{c_j^{t-1}}$, where $V_i$ is the set of nodes that are $i$'s neighbours. $\nu_{damp}$ is an important global dampening parameter, whose presence is important to make the overall model stable in the steady-state (see next section).
 
 The above model can be summed up as: at each time step $t$, for each node, we add up content produced by its neighbours in the previous time step, multiply by $\nu_{damp} $, add $\lambda_{int}$, and draw with this parameter from the random variable $R$ to get content production at $t$.
 
-Throughout this paper we will use connected Watts–Strogatz random graphs. A Watts–Strogatz graph is described by 3 parameters $(n, k, p)$. First, a regular ring lattice is constructed, a graph with $n$ nodes each connected to $k < n$ neighbors. Then, "shortcuts" are created by replacing some edges as follows: for each original edge $(u, v)$ in the graph, with probability $p$ replace it with a new edge $(u, w)$, where $w$ is randomly chosen. If the process yield a graph that is not connected, then try again until we get a connected graph. This randomization process does not change the mean degree in the graph, which remains $k$.
+Throughout this paper we will use connected Watts–Strogatz random graphs. A Watts–Strogatz graph is described by 3 parameters $(n, k, p)$. First, a regular ring lattice is constructed, a graph with $n$ nodes each connected to $k < n$ neighbors. Then, "shortcuts" are created by replacing some edges as follows: for each original edge $(u, v)$ in the graph, with probability $p$ replace it with a new edge $(u, w)$, where $w$ is randomly chosen. If the process yield a graph that is not connected, then try again until we get a connected graph. Note that the final randomization process does not change the mean degree in the graph, which remains $k$ at every step.
 
 \section{Mean behaviour, stability and the network effect}
 
-In the model constructed, there are two sources of randomness: (i) randomness introduced when the graph is constructed, and (ii) the random variable used in content production (if one is used). As we will see, to understand the network effects discussed in this paper (ii) is not important, and the random variable may be replaced by its mean.
+In the model constructed, there are two sources of randomness: (i) randomness introduced when the graph is constructed, and (ii) the random variables used in content production (if one is used). As we will see, to understand the network effects discussed in this paper (ii) is not important, and the random variable may be replaced by its mean.
 
 First, to examine the mean behaviour of the model we run simulations on a Watts-Strogatz graph with $(n=10\,000, k=50, p=0.1)$. We look at three models of content production: (i) a uniform distribution $R(\lambda)=U(0, 2 \lambda)$, (ii) a Poisson distribution $R(\lambda)=Pois(\lambda)$, and (iii) the mean constant case $R(\lambda)=\lambda$. Note that in all three cases, the mean is $E[R(\lambda)]=\lambda$.
 
-Figure 2 shows that content production stabilizes after about $T=10$ steps, and that that in all three cases mean content production across the network is the same, apart from random fluctuations coming from the random variables. Note that in case (i) and (iii) content production is modeled to be continuous, whereas in case of (ii) it's discrete, since the Poisson is a discrete random variable. Figures 3 show the histogram of content production across the network in the last time step, for all three models considered.
+Figure 2 shows that content production stabilizes after about $T=10$ steps, and that that in all three cases mean content production across the network is the same, apart from random fluctuations coming from the random variables. Note that in case (i) and (iii) content production is modeled to be continuous, whereas in case of (ii) it's discrete, since the Poisson is a discrete random variable. Figure 3 shows the histogram of content production across nodes in the last time step, for all three models considered.
 
 \begin{figure}[h]
 	\centering 
 	\includegraphics[width=0.4\textwidth]{figure-2.png}	
-	\caption{Content production on Watts-Strogatz graph with $(n=10\,000, k=50, p=0.1)$, $E[R(\lambda)]= \lambda$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$. Mean content production converges.} 
+	\caption{Content production on Watts-Strogatz graph with $(n=10\,000, k=50, p=0.1)$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$. Mean content production converges.} 
 \end{figure}
 
 \begin{figure}[h]
 	\centering 
 	\includegraphics[width=0.4\textwidth]{figure-3.png}	
-	\caption{Density histogram of content production during the last step of Monte Carlo simulation for the previous models. The y axis is logarithmic to ease readability.} 
+	\caption{Density histogram of content production during the last step of Monte Carlo simulation for the previous models. The y-axis is logarithmic to ease readability.} 
 \end{figure}
 
 In Figure 2, mean content production clearly stabilized. Next, let's re-run the same simulations, but on a Watts-Strogatz graph with $k=200$. The results are shown on Figure 4.
@@ -92,7 +92,7 @@ In Figure 2, mean content production clearly stabilized. Next, let's re-run the 
 \begin{figure}[h]
 	\centering 
 	\includegraphics[width=0.4\textwidth]{figure-4.png}	
-	\caption{Content production on Watts-Strogatz graph with $(n=10\,000, k=200, p=0.1)$, $E[R(\lambda)]= \lambda$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$. Mean content production diverges.} 
+	\caption{Content production on Watts-Strogatz graph with $(n=10\,000, k=200, p=0.1)$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$. Mean content production diverges.} 
 \end{figure}
 
 With these parameters content production diverges, it does not reach a steady-state as before. Consider the mean constant case  to see why: assume that the model reaches a steady-state mean content production $c_{base}$. Then, from the way the model is constructed it follows that (using $E[R(\lambda)]=\lambda$):
@@ -113,7 +113,7 @@ For the first model with $\lambda_{int} = 1, k = 50, \nu_{damp} = 0.01$ this yie
     k \cdot \nu_{damp} < 1
 \end{equation}
 
-For the divergent case, the above inequality is not satisfied. It is interesting to see the case where the denominator is exactly 0, which we can achieve by setting $k=50$. In this case, content production does not explode, but increases linearly indefinitely.
+For the divergent case, the above inequality is not satisfied. It is interesting to see the case where the denominator in Equation (2) is exactly 0, which we can achieve by setting $k=50$. In this case, content production does not explode, but increases linearly indefinitely.
 
 \begin{figure}[h]
 	\centering 
@@ -121,16 +121,16 @@ For the divergent case, the above inequality is not satisfied. It is interesting
 	\caption{Same as before, with $k=100$.} 
 \end{figure}
 
-This simple experiment shows the \textbf{network effect}: we parameterized intrinsic content production with $\lambda_{int}=1$, which itself, without the boost from neighbours, would have yielded mean content production $c_{base} = \lambda_{int} = 1 $ in this simple model. However, due to the network effect, which here is a function of $k$ and $\nu_{damp}$, the actual mean content production $c_{base}$ is significantly higher, by a factor of $ \frac{ 1 }{ 1 - k \cdot \nu_{damp} } $.
+This simple experiment of Figure 2 shows the \textbf{network effect}: we parameterized intrinsic content production with $\lambda_{int}=1$, which itself, without the boost from neighbours, would have yielded mean content production $c_{base} = \lambda_{int} = 1 $ in this simple model. However, due to the network effect, which here is a function of $k$ and $\nu_{damp}$, the actual mean content production $c_{base}$ is significantly higher, by a factor of $ \frac{ 1 }{ 1 - k \cdot \nu_{damp} } $.
 
 \section{A note on regularizing models}
 
-Real networks can experience exponential growth for a while, but not indefinitely --- some physical resource, such as people, attention or time runs out eventually. In this sense, the models above have unrealistic or un-physical domains. In principle, we can regularize the model in two places:
+Real networks can experience exponential growth for a while, but not indefinitely --- some physical resource, such as people, attention or time runs out eventually. In this sense, the models above have unrealistic or un-physical domains because they can diverge. In principle, we can regularize the model in two places:
 
 \begin{itemize}
 \setlength\itemsep{0em}
-    \item regularize the network effect: assume that each node can only consume a finite number $\eta_{max}$ of its neighbours' content in a time step
-    \item regularize content production: assume that each node can only produce a finite number $c_{max}$ content
+    \item regularize the network effect: assume that each node can only consume a finite amount $\eta_{max}$ of its neighbours' content in a time step
+    \item regularize content production: assume that each node can only produce a finite amount $c_{max}$ content
 \end{itemize}
 
 In both cases, the assumption is physical in a real network, because only finite time is available per time step to read or write content.
@@ -153,7 +153,7 @@ Due to the properties of $\sigma(\cdot)$, there is no closed form solution for $
 
 \section{Degree distribution effect}
 
-In this section we will discuss a small, nuanced adjustment to the above formula for mean content production on a random graph \textit{that is due to the degree distribution of nodes}. In a Watts-Strogatz graph with $p=0$, all nodes will have exactly $k$ neighbours; however, at $p>0$, due to the random adjustment of edges, some nodes will end up with lower, and some with higher degree than $k$. Figure 6 shows the degree distribution of a Watts-Strogatz graph with $k=50$ at different $p$ values. It shows that with increasing $p$, the distribution spreads out around the mean of $k$.
+In this section we will discuss a small, nuanced adjustment to the above formula for mean content production on a random graph \textit{that is due to the degree distribution of nodes}. In a Watts-Strogatz graph with $p=0$, all nodes have exactly $k$ neighbours; however, at $p>0$, due to the random adjustment of edges, some nodes will end up with lower, and some with higher degree count than $k$. Figure 6 shows the degree distribution of a Watts-Strogatz graph with $k=50$ at different $p$ values. It shows that with increasing $p$, the distribution spreads out around the mean of $k$.
 
 \begin{figure}[h]
 	\centering 
@@ -183,21 +183,21 @@ The explanation is as follows: the mean degree of nodes remains exactly $k$ in a
 	\caption{Content production in the previous network, as a function of node degree. The horizontal red dashed line shows the baseline content production we would have without a spread of degree distribution, the vertical red dashed line is the mean degree. Clearly content production is a function of degree, and the spread is wider in the positive direction.} 
 \end{figure}
 
-In the rest of the paper we will use the primed notation $c_{base}\prime$ to refer to the bare content production on the network, taking into account the above effect (so slightly higher than $c_{base}$). Bare here means no treatment is applied, all nodes are identical. Since there is no known formula, $c_{base}\prime$ is calculated from a bare Monte Carlo network simulation.
+In the rest of the paper we will use the primed notation $c_{base}\prime$ to refer to the "bare" content production on the network, taking into account the above effect (so slightly higher than $c_{base}$). Bare here means no treatment is applied, all nodes are identical. Since there is no known formula for $c_{base}\prime$ to me, it is calculated from a bare Monte Carlo network simulation in the rest of the paper.
 
 \section{Spillover effect}
 
 In this section we will start simulating \textbf{Randomized Controlled Trials (RCTs)} on networks. It's important to point out that RCTs are traditionally run with the \textbf{Independence Assumption (IA)}, that the units of experimentation are independent of each other. In the network models considered here, the IA does not hold --- the resulting behaviour is the topic and \textit{raison d'etre} of this paper itself.
 
-Consider a model on a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$, with identical parameters as before, without regularization. Per Equation (2), such a model has an expected steady-state content production of $c_{base}\prime \approxeq 2$. This base model is modified so that a random 2\% treatment subset of nodes receives a $\Delta \lambda = 0.05$ boost to their content production. Figure 10 shows content production separately for \textbf{treatment}, \textbf{neigbhours} of treatment and the \textbf{rest} of nodes (these 3 are distinct sets covering the whole graph).
+Consider a model on a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$, with identical parameters as before, without regularization. Per Equation (2), such a model has an expected steady-state content production of $c_{base}\prime \approxeq 2$. This base model is modified so that a random 2\% treatment subset of nodes receives a $\Delta \lambda = 0.05$ boost to their overall content production. Figure 10 shows content production separately for \textbf{treatment}, \textbf{neigbhours} of treatment and the \textbf{rest} of nodes (these 3 are distinct sets covering the whole graph).
 
 \begin{figure}[h]
 	\centering 
 	\includegraphics[width=0.4\textwidth]{figure-10.png}	
-	\caption{Spillover effect in a Randomized Controlled Trial on a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$ with $N=10\,000$ treatment nodes receiving a $\Delta \lambda = 0.05$ boost to their content production, for all three (mean constant, uniform, Poisson) content production models. The line types match the legend on previous figures. The first few time steps where steady-state is approached is not shown.} 
+	\caption{Spillover effect in a Randomized Controlled Trial on a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$ with $N=10\,000$ treatment nodes receiving a $\Delta \lambda = 0.05$ boost to their overall content production, for all three (mean constant, uniform, Poisson) content production models. The line types match the legend on previous figures. The first few time steps where steady-state is approached is not shown.} 
 \end{figure}
 
-Let's see the split of nodes and the average content production level of the various subsets in the network (\textbf{control} is the union of \textbf{neighbours} and \textbf{rest}):
+The following table shows the split of nodes and the average content production $c$ level of the various subsets in the network (\textbf{control} is the union of \textbf{neighbours} and \textbf{rest}):
 
 \begin{center}
 \begin{tabular}{ |c|c|c| } 
@@ -212,25 +212,25 @@ Let's see the split of nodes and the average content production level of the var
 \end{tabular}
 \end{center}
 
-What this shows is that the treatment effect \textbf{spills over} into the control group. The spillover is stronger into direct neighbours of treatment, weaker for the rest of nodes. It's also worth noting that treatment, control and neighbours subsets have higher content production than the simulated $c_{base}\prime=2.0019$ base value, which shows that even a small treatment group can "contaminate" the entire network. However, rest (nodes that are not treatment and also not neighbours of treatment) has slightly lower content production ($c_{rest}/c_{base}\prime < 1$) --- how is this possible? The explanation is statistical: the nodes in rest are biased to have less neighbours, in this Monte Carlo simulation their mean degree is $k=49.2$, and this results in this subset's content production being slightly lower due to lower network effects (using the naive formula, $c_{base}(k=49.2)=1.9686$. However, the overall conclusions are unaffected by this observation.
+What this shows is that the treatment effect \textbf{spills over} into the control group. The spillover is stronger into direct neighbours of treatment, weaker for the rest of nodes. It's also worth noting that treatment, control and neighbours subsets have higher content production than the simulated $c_{base}\prime=2.0019$ base value, which shows that even a small treatment group can "contaminate" the entire network. However, rest (nodes that are not treatment and also not neighbours of treatment) has slightly lower ($c_{rest}/c_{base}\prime < 1$) content production --- how is this possible? The explanation is statistical: the nodes in rest are biased to have less neighbours, in this Monte Carlo simulation their mean degree is $k=49.2$, and this results in this subset's content production being slightly lower due to lower network effects (using the naive formula, $c_{base}(k=49.2)=1.9686$. However, the overall conclusions are unaffected by this observation.
 
-We can measure the strength of the spillover effect:
+We can measure the strength of the spillover effect by defining:
 
 \begin{equation}
 e_{spillover} = c_{control} / c_{base}\prime  - 1
 \end{equation}
 
-in other words, what is the degree of contamination (due to the treatment effect applied to the treatment group). In this scenario we measure $e_{spillover} = 0.0005$.
+In other words, $e_{spillover}$ measures the degree of contamination (due to the treatment effect applied to the treatment group). In this scenario we measure $e_{spillover} = 0.0005$.
 
 Clearly, the spillover effect must be a function of $N/n$ and $k$:
 
 \begin{itemize}
 \setlength\itemsep{0em}
-    \item as $N/n \rightarrow 0$ the effect goes to zero as the treatment group becomes insignificant in the overall network
-    \item as $k \rightarrow 0$ and nodes have less neighbours, the model approaches a classical RCT where the Independence Assumption holds
+    \item as $N/n \rightarrow 0, e_{spillover} \rightarrow 0$, because the treatment group becomes insignificant in the overall network
+    \item as $k \rightarrow 0, e_{spillover} \rightarrow 0$, because nodes have less neighbours and the model approaches a conventional RCT where the Independence Assumption holds
 \end{itemize}
 
-To illustrate the dependence on $N/n$ and $k$:, let's look at the same experiment as above, but with $k=10$ and a 1\% treatment group of $N=5\,000$ nodes. In this scenario, where $c_{base}\prime=1.1112$, the mean steady-state of the network is:
+To illustrate the dependence on $N/n$ and $k$, let's look at the same experiment as above, but with $k=10$ and a 1\% treatment group of $N=5\,000$ nodes. In this scenario, where $c_{base}\prime=1.1112$, the mean steady-state of the network is:
 
 \begin{center}
 \begin{tabular}{ |c|c|c| } 
@@ -261,23 +261,23 @@ In an RCT, we measure the treatment versus control group lift, and attribute it 
 e_{treatment} = c_{treatment} / c_{control} - 1
 \end{equation}
 
-In the previous two experiments, we measure $e_{treatment} = 0.0253$ and $e_{treatment} = 0.0449$, respectively. Both are lower than the actual treatment effect $\Delta \lambda = 0.05$ we applied synthetically. This is the \textbf{experiment dampening effect}, a result of the spillover effect: because the treatment effect spills over into control and boosts control as well, we measure a lower treatment effect. We can define the experiment dampening effect as:
+In the previous two experiments, we measure $e_{treatment} = 0.0253$ and $e_{treatment} = 0.0449$, respectively. Both are lower than the actual treatment effect $\Delta \lambda = 0.05$ we applied synthetically. This is the \textbf{experiment dampening effect}, a result of the spillover effect: because the treatment effect spills over into control and \textit{boosts control as well}, we measure a lower treatment effect. We can define the experiment dampening effect as:
 
 \begin{equation}
 e_{dampening} = e_{treatment} / \Delta \lambda
 \end{equation}
 
-In the case above, we get $e_{dampening} = 0.5075$ and $e_{dampening} = 0.8990$, respectively.
+In the cases above, we get $e_{dampening} = 0.5075$ and $e_{dampening} = 0.8990$, respectively.
 
 \section{Intrinsic dampening effect}
 
-The reason experiments measure treatment against control in traditional RCTs is that this gets rid of seasonal effects. If the experimenter were to compare the treatment group's before-treatment and during-treatment (or after-treatment) metrics, she could not know whether the measured effect is due to the applied treatment, or something else that changed during the experiment. However, in our models, there is no seasonality, so we can examine $c_{treatment}/c_{base}\prime$. Let's define the intrinsic dampening effect:
+The reason experiments measure treatment against control in traditional RCTs is to factor out seasonal effects. If the experimenter were to compare the treatment group's before-treatment and during-treatment (or after-treatment) metrics, she would not know whether the measured effect is due to the applied treatment, or something else that changed during the experiment. However, in our models, there is no seasonality, so we can examine $c_{treatment}/c_{base}\prime$. Let's define the intrinsic dampening effect:
 
 \begin{equation}
 e_{intrinsic} = c_{treatment} / c_{base}\prime - 1
 \end{equation}
 
-This measures the dampening in the effect itself due to the connected, non-independent nature of the network. Naively, we may expect that this ratio should be just the applied treatment effect. However, as we will see, this is not the case. Specifically, for the first experiment considered previously, $e_{intrinsic} = 0.0258$, for the second it's $e_{intrinsic} = 0.0450$ (note these are not the same values as for $e_{treatment}$). The full lift is not realized in the treatment group due to content production in the rest of the network being lower, hence, the feedback the treatment nodes receive in their $\nu_i^t = \nu_0 \sum_{j \in V_i}{c_j^{t-1}}$ term is lower. If the entire network were to receive the $\Delta \lambda$ boost, in other words if $N=n$, then the measured $e_{intrinsic} = \Delta \lambda$ would hold, as is evident from Equation (2).
+This measures the dampening in the effect itself due to the connected, non-independent nature of the network. Naively, we may expect that this ratio should be just the applied treatment effect. However, as we will see, this is not the case. Specifically, for the first experiment considered previously, $e_{intrinsic} = 0.0258$, for the second it is $e_{intrinsic} = 0.0450$ (note these are not the same values as for $e_{treatment}$). The full lift is not realized in the treatment group due to content production in the rest of the network being lower, hence, the feedback the treatment nodes receive in their $\nu_i^t = \nu_0 \sum_{j \in V_i}{c_j^{t-1}}$ term is lower. If the entire network were to receive the $\Delta \lambda$ boost, in other words if $N=n$, then the measured $e_{intrinsic} = \Delta \lambda$ would hold, as is evident from Equation (2).
 
 Note that the experiment dampening effect and the intrinsic dampening effect are related, but not the same thing:
 
@@ -291,9 +291,9 @@ Note that the experiment dampening effect and the intrinsic dampening effect are
 
 The clustering effect is a third effect closely related to the previous two: if the treatment nodes are more densely clustered than than the overall graph (or the control group), than the treatment nodes will achieve higher content production, both compared to the control group's $c_{control}$ and the base rate $c_{base}\prime$.
 
-In a randomized test, \textit{on average} the treatment and control's clustering should be the same, but variations may produce higher clustering in treatment; \textit{stratification} controls for this in traditional RCTs. Or, an experiment may have selection bias and thus result is a more clustered treatment group.
+In a randomized test, \textit{on average} the treatment and control's clustering should be the same, but variations may produce higher clustering in treatment; \textit{stratification} controls for this in conventional RCTs. Or, an experiment may have selection bias and thus result is a more clustered treatment group.
 
-To illustrate the effect, let's look at a Monte Carlo run where the treatment nodes are not randomly selected, but more clustered "by design". To accomplish tighter clustering in a Watts-Strogatz graph is straightforward: instead of randomly selecting nodes, pick a contiguous set of nodes from the original ring (before randomization). At the relatively low $p$ edge randomization values that we're using, this will result in a highly clustered subset.
+To illustrate the effect, let's look at a Monte Carlo run where the treatment nodes are not randomly selected, but significantly more clustered on purpose. To accomplish tighter clustering in a Watts-Strogatz graph is straightforward: instead of randomly selecting nodes, pick a contiguous set of nodes from the original ring (before randomization). At the relatively low $p$ edge randomization values that we're using, this will result in a highly clustered subset.
 
 \begin{figure}[h]
 	\centering 
@@ -301,7 +301,7 @@ To illustrate the effect, let's look at a Monte Carlo run where the treatment no
 	\caption{The same Watts-Strogatz graph from Figure 1, but the treatment group is the first 20 nodes from the original ring.} 
 \end{figure}
 
-We run an experiment with identical parameters as in Figure 7, except with a much more clustered treatment group: a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$, with a 2\% treatment group of $N=10\,000$ nodes receiving a $\Delta \lambda = 0.05$ boost to their content production.
+We run an experiment with identical parameters as in Figure 10, except with a much more clustered treatment group: a Watts-Strogatz graph with $(n=500\,000, k=50, p=0.1)$, $\lambda_{int} = 1$ and $\nu_{damp} = 0.01$, with a 2\% treatment group of $N=10\,000$ nodes receiving a $\Delta \lambda = 0.05$ boost to their content production.
 
 \begin{figure}[h]
 	\centering 
@@ -309,7 +309,7 @@ We run an experiment with identical parameters as in Figure 7, except with a muc
 	\caption{The same Watts-Strogatz graph from Figure 7, but the treatment group is tightly clustered, resulting in significantly higher content production.} 
 \end{figure}
 
-However, previously, with a random treatment group the $10\,000$ treatment nodes had $313\,507$ non-treatment neighbours and 37.2\% of treatment node's neighbours were also in treatment, now the $10\,000$ treatment nodes only have $46\,545$ non-treatment neighbours and 90.6\% of treatment node's neighbours were also in treatment. This highly clustered model yields:
+However, previously, with a random treatment group the $10\,000$ treatment nodes had $313\,507$ non-treatment neighbours and 37.2\% of treatment node's neighbours were also in treatment, now the $10\,000$ treatment nodes only have $46\,545$ non-treatment neighbours and 90.6\% of treatment node's neighbours are also in treatment. This highly clustered model yields:
 
 \begin{center}
 \begin{tabular}{ |c|c|c| } 
@@ -324,11 +324,11 @@ However, previously, with a random treatment group the $10\,000$ treatment nodes
 \end{tabular}
 \end{center}
 
-The highly clustered case achieves $e_{dampening} = 0.9136$, so there is barely any dampening, the treatment lift is 90 \% of the actual $\Delta \lambda$ lift. The explanation is that 90\% of the treatment group nodes' neighbours are also in treatment, so they get their own boost back, and there is relatively little dampening. It's also worth noting that $e_{spillover} = 0.0001$, 5x lower than with a truly random treatment group. The explanation is that there are less edges running between treatment and control, so less ways for the spillover to happen.
+The highly clustered case achieves $e_{dampening} = 0.9136$, so there is barely any dampening, the treatment lift is 91\% of the actual $\Delta \lambda$ lift. The explanation is that 90\% of the treatment group nodes' neighbours are also in treatment, so they get "their own boost back", and there is relatively little dampening. It is also worth noting that $e_{spillover} = 0.0001$, 5x lower than with a truly random treatment group. The explanation is that there are less edges running between treatment and control, so less ways for the spillover to happen.
 
 \section{Experiment size effect}
 
-The last effect we consider is the experiment size effect. The experiment size effect is closely related to the spillover effect, and is simply the observation that with a larger treatment group, there is stronger spillover, which yields stronger feedback, which results in higher content production in the treatment group. Figure 14 shows the variation of $e_{intrinsic}$ with $N/n$ for a Watts-Strogatz graph with $n=10\,000$ and $p=0.1$ and $\Delta \lambda = 0.5$.
+The last effect we consider is the experiment size effect. The experiment size effect is closely related to the spillover effect, and is simply the observation that with a larger treatment group, there is stronger spillover, which yields stronger feedback, which results in higher content production in the treatment group. Figure 14 shows the variation of $e_{intrinsic}$ with $N/n$ for a Watts-Strogatz graph with $n=10\,000, p=0.1$ and $\Delta \lambda = 0.5$.
 
 \begin{figure}[h]
 	\centering 
@@ -336,7 +336,7 @@ The last effect we consider is the experiment size effect. The experiment size e
 	\caption{As $N/n$ approaches 1, the intrinsic effect (the ratio of treatment content production to base content production) approaches the experiment effect $\Delta \lambda$. Experiment ran on a Watts-Strogatz graph with $n=10\,000$ and $p=0.1$, at different $k$ values.} 
 \end{figure}
 
-However, as pointed out earlier, in an RCT, the experimenter would compares treatment content production to control's (and not base). Figure 15 shows $e_{dampening}$ (the ratio of the treatment effect $e_{treatment}$ to the actual $\Delta \lambda)$ effect) for the same experiment. Remarkably, the dampening is constant with $N/n$, which means that even with increasing $N$, the experimenter would measure the same treatment effect, because due to spillover, control's content production also goes up.
+However, as pointed out earlier, in an RCT, the experimenter compares treatment content production to control's (and not base). Figure 15 shows $e_{dampening}$ (the ratio of the treatment effect $e_{treatment}$ to the actual $\Delta \lambda$ effect) for the same experiment. Remarkably, the dampening is essentially constant with $N/n$, which means that even with increasing $N$, the experimenter would measure the same treatment effect, because due to spillover, control's content production also goes up.
 
 \begin{figure}[h]
 	\centering 
@@ -344,38 +344,26 @@ However, as pointed out earlier, in an RCT, the experimenter would compares trea
 	\caption{The dampening effect (the ratio of the treatment effect to $\Delta \lambda$) is constant with $N/n$, and is only a function of $k$.} 
 \end{figure}
 
-Interestingly, both plots show a splitting with $k$, the mean degree of the graph: the lower $k$, the closer we are to the Independence Assumption, the more the measured treatment effect approaches $\Delta \lambda)$. Separate experiments not shown here show no dependence on $p$.
+Both plots split as a function of $k$, the mean degree: the lower $k$, the closer we are to the Independence Assumption, the more the measured treatment effect approaches $\Delta \lambda$. Separate experiments (not discussed here) show no dependence on $p$.
 
 \section{Conclusion}
 
-In traditional RCTs where the Independence Assumption holds, the experimenters main focus is on study design and controlling for statistical fluctuations between the various experiment groups using, using techniques such as A/A tests, sample size mismatch tests, p-values, Bayesian testing, and show on. This paper showed that when running experiments on social networks or other graphs, where the IA does not hold, various other effects, all a result of the network effect, must be considered and controlled for. As the last section showed, even with very high treatment group sizes, due to the treatment effect spilling over to the control group, the experimenter will never measure the true treatment effect when comparing treatment to control. This suggests that in such networked conditions, (i) Interrupted Time Series (ITS) analysis and (ii) measuring the underlying graph properties and running simulations similar to the ones used here may be a good choice, to establish a baselines to compare treatment group behaviour with.
+In traditional RCTs where the Independence Assumption holds, the experimenters' main focus is on study design and controlling for statistical fluctuations between the various experiment groups using techniques such as A/A tests, sample size mismatch tests, p-values, Bayesian testing, and so on. This paper showed that when running experiments on social networks or other graphs, where the IA does not hold, various other effects, all a result of the network effect, must be considered and controlled for. As the last section showed, even with high treatment group sizes, due to the treatment effect spilling over to the control group, the experimenter will never measure the true treatment effect when comparing treatment to control. This suggests that in networked conditions measuring or estimating the underlying graph structure and network effects, and then running simulations (similar to the ones in this paper) may be a good method to establish a baseline to compare treatment group behaviour with.
 
 \section{Code}
 
-The paper's accompanying code, including all figures in the paper, is available as a Python notebook on Github. The random seed has been set to a fixed value in the code, so all numerical results are reproducible by re-running the notebook. Use the below link to access the code:
+The paper's accompanying code, including all figures in the paper, is available as a Python notebook on Github. The random seed has been set to a fixed value in the code, so all numerical results are reproducible by re-running the notebook. Use the below link to access the notebook:
 \texttt{{\scriptsize https://github.com/mtrencseni/monte-carlo-network-effects-rct-2023 }}
 
- %% If you have bibdatabase file and want bibtex to generate the
-%% bibitems, please use
-%%
 \bibliographystyle{elsarticle-harv} 
-%%\bibliography{example}
-
-%% else use the following coding to input the bibitems directly in the
-%% TeX file.
 
 \begin{thebibliography}{00}
-
-%% \bibitem[Author(year)]{label}
-%% For example:
 
 \bibitem[Kohavi (2020)]{Kohavi2020} Kohavi, Tang, and Xu (2020). \textit{Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing.} Cambridge University Press.
 
 \bibitem[Watts, Strogatz (1998)]{WattsStrogatz1998} Watts, Strogatz (1998). \textit{Collective dynamics of 'small-world' networks.} Nature. 393 (6684): 440–442.
 
 \bibitem[Barabási (2002)]{Barabasi2002} Albert, Barabási (2002). \textit{Statistical mechanics of complex networks.} Reviews of Modern Physics. 74 (1): 47–97. arXiv:cond-mat/0106096.
-
-
 
 \end{thebibliography}
 
